@@ -35,8 +35,8 @@ use yii\di\Instance;
  *                     ],
  *                 ],
  *                 'validationKey' => [
- *                     'path' => 'components.securityManager.validationKey',
- *                     'label' => 'CSRF Validation Key',
+ *                     'path' => 'components.request.cookieValidationKey',
+ *                     'label' => 'Cookie Validation Key',
  *                     'rules' => [
  *                         ['required']
  *                     ],

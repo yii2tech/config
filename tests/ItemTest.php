@@ -12,7 +12,24 @@ use yii2tech\config\Item;
  */
 class ItemTest extends TestCase
 {
-   public function testSetGet()
+    protected function setUp()
+    {
+        $this->mockApplication([
+            'name' => 'Test Application Name',
+            'components' => [
+                'formatter' => [
+                    'nullDisplay' => 'testNullDisplay',
+                    'dateFormat' => 'large',
+                ],
+            ],
+            'params' => [
+                'param1' => 'param1value',
+                'param2' => 'param2value',
+            ]
+        ]);
+    }
+
+    public function testSetGet()
     {
         $model = new Item();
 
@@ -70,8 +87,8 @@ class ItemTest extends TestCase
                 'param1value',
             ],
             [
-                'components.securityManager.validationKey',
-                'testValidationKey',
+                'components.formatter.nullDisplay',
+                'testNullDisplay',
             ],
         ];
     }
@@ -122,11 +139,11 @@ class ItemTest extends TestCase
                 ]
             ],
             [
-                'components.securityManager.validationKey',
+                'components.formatter.nullDisplay',
                 [
                     'components' => [
-                        'securityManager' => [
-                            'validationKey' => 'value'
+                        'formatter' => [
+                            'nullDisplay' => 'value'
                         ],
                     ],
                 ],

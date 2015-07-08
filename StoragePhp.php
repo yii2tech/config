@@ -8,6 +8,7 @@
 namespace yii2tech\config;
 
 use Yii;
+use yii\helpers\FileHelper;
 use yii\helpers\VarDumper;
 
 /**
@@ -33,6 +34,7 @@ class StoragePhp extends Storage
     {
         $this->clear();
         $fileName = Yii::getAlias($this->fileName);
+        FileHelper::createDirectory(dirname($fileName));
         $bytesWritten = file_put_contents($fileName, $this->composeFileContent($values));
         return ($bytesWritten > 0);
     }

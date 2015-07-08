@@ -15,7 +15,6 @@ class StorageDbTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        Yii::$app->set('db', new Connection(['dsn' => 'sqlite::memory:']));
         $this->createTestConfigTable();
     }
 
