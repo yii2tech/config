@@ -18,16 +18,10 @@ class TestCase extends \PHPUnit_Framework_TestCase
     {
         parent::setUp();
         $this->mockApplication();
-
-        $testFilePath = $this->getTestFilePath();
-        FileHelper::createDirectory($testFilePath);
     }
 
     protected function tearDown()
     {
-        $testFilePath = $this->getTestFilePath();
-        FileHelper::removeDirectory($testFilePath);
-
         $this->destroyApplication();
     }
 
@@ -44,10 +38,8 @@ class TestCase extends \PHPUnit_Framework_TestCase
             'basePath' => __DIR__,
             'vendorPath' => $this->getVendorPath(),
             'components' => [
-                'urlManager' => [
-                    'hostInfo' => 'http://test.com',
-                    'baseUrl' => '/',
-                    'scriptUrl' => '/index.php',
+                'cache' => [
+                    'class' => 'yii\caching\DummyCache',
                 ],
             ],
         ], $config));
@@ -67,14 +59,5 @@ class TestCase extends \PHPUnit_Framework_TestCase
     protected function destroyApplication()
     {
         Yii::$app = null;
-    }
-
-    /**
-     * Returns the test file path.
-     * @return string file path.
-     */
-    protected function getTestFilePath()
-    {
-        return Yii::getAlias('@yii2tech/tests/unit/config/runtime') . DIRECTORY_SEPARATOR . getmypid();
     }
 }
