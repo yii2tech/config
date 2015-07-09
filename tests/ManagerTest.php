@@ -280,4 +280,60 @@ class ManagerTest extends TestCase
         $manager->setItemValues($itemValues);
         $this->assertTrue($manager->validate(), 'Valid values considered as invalid!');
     }
+
+    /**
+     * @depends testFetchConfig
+     */
+    public function testConfigure()
+    {
+        $this->mockApplication([
+            'name' => 'initial name',
+            'modules' => [
+                'admin' => [
+                    'class' => 'yii\base\Module',
+                    'layout' => 'default',
+                ],
+            ],
+            'params' => [
+                'param1' => 'initial1',
+                'param2' => 'initial2',
+            ],
+        ]);
+        $manager = new Manager();
+
+        // plain :
+        $manager->configure(Yii::$app, [
+            'name' => 'new name',
+        ]);
+        $this->assertEquals('new name', Yii::$app->name, 'Unable to override plain field.');
+
+        // params :
+        $manager->configure(Yii::$app, [
+            'params' => [
+                'param1' => 'override1'
+            ],
+        ]);
+        $this->assertEquals('override1', Yii::$app->params['param1'], 'Unable to override params.');
+        $this->assertEquals('initial2', Yii::$app->params['param2'], 'Initial params are lost.');
+
+        // components :
+        $manager->configure(Yii::$app, [
+            'components' => [
+                'formatter' => [
+                    'nullDisplay' => 'new null display'
+                ],
+            ],
+        ]);
+        $this->assertEquals('new null display', Yii::$app->formatter->nullDisplay, 'Unable to override component param.');
+
+        // modules :
+        $manager->configure(Yii::$app, [
+            'modules' => [
+                'admin' => [
+                    'layout' => 'newLayout'
+                ],
+            ],
+        ]);
+        $this->assertEquals('newLayout', Yii::$app->getModule('admin')->layout, 'Unable to override module.');
+    }
 }

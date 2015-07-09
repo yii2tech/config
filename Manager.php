@@ -8,21 +8,30 @@
 namespace yii2tech\config;
 
 use Yii;
+use yii\base\BootstrapInterface;
 use yii\base\Component;
 use yii\base\InvalidConfigException;
 use yii\base\InvalidParamException;
 use yii\caching\Cache;
 use yii\di\Instance;
+use yii\helpers\ArrayHelper;
 
 /**
  * Manager allows management of the dynamic application configuration parameters.
  * Configuration parameters are set up via [[items]].
  * Parameters can be saved inside the persistent storage determined by [[storage]].
  *
+ * Manager implements [[BootstrapInterface]], so if you want to apply it to application
+ * you should place it at 'bootstrap' configuration section.
+ *
  * Application configuration example:
  *
  * ```php
  * [
+ *     'bootstrap' => [
+ *         'configManager',
+ *         // ...
+ *     ],
  *     'components' => [
  *         'configManager' => [
  *             'class' => 'yii2tech\config\Manager',
@@ -54,7 +63,7 @@ use yii\di\Instance;
  *
  * ```php
  * $configManager = Yii::$app->get('configManager');
- * Yii::$app->configure($configManager->fetchConfig());
+ * $configManager->configure(Yii::$app);
  * ```
  *
  * @see Item
@@ -66,7 +75,7 @@ use yii\di\Instance;
  * @author Paul Klimov <klimov.paul@gmail.com>
  * @since 1.0
  */
-class Manager extends Component
+class Manager extends Component implements BootstrapInterface
 {
     /**
      * @var array[]|Item[]|string config items in format: id => configuration.
@@ -106,6 +115,19 @@ class Manager extends Component
     {
         parent::init();
         $this->cache = Instance::ensure($this->cache, Cache::className());
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function bootstrap($app)
+    {
+        try {
+            $this->configure($app);
+        } catch (\Exception $exception) {
+            // fetching config from storage like database may fail at initial point, like before DB migrations applied
+            Yii::warning($exception->getMessage(), __METHOD__);
+        }
     }
 
     /**
@@ -305,5 +327,45 @@ class Manager extends Component
             $result = $result && $isItemValid;
         }
         return $result;
+    }
+
+    /**
+     * Configures given module with provided configuration array.
+     * @param \yii\base\Module $module module to be configured.
+     * @param array $config configuration array.
+     */
+    public function configure($module, $config = null)
+    {
+        if ($config === null) {
+            $config = $this->fetchConfig();
+        }
+        foreach ($config as $key => $value) {
+            switch ($key) {
+                case 'components':
+                    $components = array_merge($module->getComponents(true), $module->getComponents(false));
+                    $components = ArrayHelper::merge($components, $value);
+                    $module->setComponents($components);
+                    break;
+                case 'modules':
+                    $nestedModules = $module->getModules(false);
+                    foreach ($nestedModules as $id => $nestedModule) {
+                        if (!isset($value[$id])) {
+                            continue;
+                        }
+                        if (is_object($nestedModule)) {
+                            $this->configure($nestedModule, $value[$id]);
+                        } else {
+                            $nestedModules[$id] = ArrayHelper::merge($nestedModule, $value[$id]);
+                        }
+                    }
+                    $module->setModules($nestedModules);
+                    break;
+                case 'params':
+                    $module->params = ArrayHelper::merge($module->params, $value);
+                    break;
+                default:
+                    $module->$key = $value;
+            }
+        }
     }
 }
