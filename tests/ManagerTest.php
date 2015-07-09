@@ -202,8 +202,8 @@ class ManagerTest extends TestCase
         $itemValues = $manager->getItemValues();
 
         $emptyItemValues = [
-            'item1' => null,
-            'item2' => null,
+            'item1' => [],
+            'item2' => [],
         ];
 
         $manager->setItemValues($emptyItemValues);
