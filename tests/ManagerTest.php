@@ -3,6 +3,7 @@
 namespace yii2tech\tests\unit\config;
 
 use Yii;
+use yii\helpers\FileHelper;
 use yii2tech\config\Item;
 use yii2tech\config\Manager;
 use yii2tech\config\StoragePhp;
@@ -123,6 +124,7 @@ class ManagerTest extends TestCase
             ],
         ];
         $fileName = $this->getTestFileName();
+        FileHelper::createDirectory(dirname($fileName));
         $fileContent = '<?php return ' . var_export($items, true) . ';';
         file_put_contents($fileName, $fileContent);
 
