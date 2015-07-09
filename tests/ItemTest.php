@@ -22,6 +22,12 @@ class ItemTest extends TestCase
                     'dateFormat' => 'large',
                 ],
             ],
+            'modules' => [
+                'admin' => [
+                    'class' => 'yii\base\Module',
+                    'layout' => 'default',
+                ],
+            ],
             'params' => [
                 'param1' => 'param1value',
                 'param2' => 'param2value',
@@ -46,6 +52,16 @@ class ItemTest extends TestCase
         $model->label = $label;
 
         $this->assertEquals($label, $model->getAttributeLabel('value'), 'Wrong value label!');
+    }
+
+    public function testGetHint()
+    {
+        $model = new Item();
+
+        $description = 'TestPlaceholderDescription';
+        $model->description = $description;
+
+        $this->assertEquals($description, $model->getAttributeHint('value'), 'Wrong value hint!');
     }
 
     /**
@@ -89,6 +105,10 @@ class ItemTest extends TestCase
             [
                 'components.formatter.nullDisplay',
                 'testNullDisplay',
+            ],
+            [
+                'modules.admin.layout',
+                'default',
             ],
         ];
     }
@@ -144,6 +164,16 @@ class ItemTest extends TestCase
                     'components' => [
                         'formatter' => [
                             'nullDisplay' => 'value'
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'modules.admin.layout',
+                [
+                    'modules' => [
+                        'admin' => [
+                            'layout' => 'value'
                         ],
                     ],
                 ],

@@ -11,6 +11,7 @@ use Yii;
 use yii\base\Exception;
 use yii\base\InvalidConfigException;
 use yii\base\Model;
+use yii\di\ServiceLocator;
 use yii\validators\Validator;
 
 /**
@@ -20,7 +21,7 @@ use yii\validators\Validator;
  *
  * @see Manager
  *
- * @property string $value config parameter value.
+ * @property mixed $value config parameter value.
  *
  * @author Paul Klimov <klimov.paul@gmail.com>
  * @since 1.0
@@ -36,9 +37,9 @@ class Item extends Model
      */
     public $label = 'Value';
     /**
-     * @var mixed config parameter value.
+     * @var string brief description for the config item.
      */
-    protected $_value;
+    public $description;
     /**
      * @var array validation rules.
      * Unlike the configuration for the common model, each rule should not contain attribute name
@@ -53,17 +54,13 @@ class Item extends Model
      * ```php
      * 'params.myparam';
      * ['params', 'myparam'];
-     * 'components.securityManager.validationKey';
-     * ['components', 'securityManager', 'validationKey'];
+     * 'components.formatter.nullDisplay';
+     * ['components', 'formatter', 'nullDisplay'];
      * ```
      *
      * If path is not set it will point to [[\yii\base\Module::params]] with the key equals to [[id]].
      */
     public $path;
-    /**
-     * @var string brief description for the config item.
-     */
-    public $description;
     /**
      * @var string input type
      */
@@ -72,9 +69,14 @@ class Item extends Model
      * @var array options for select box
      */
     public $items;
+    /**
+     * @var mixed config parameter value.
+     */
+    private $_value;
+
 
     /**
-     * @param mixed $value
+     * @param mixed $value config parameter value.
      */
     public function setValue($value)
     {
@@ -82,7 +84,7 @@ class Item extends Model
     }
 
     /**
-     * @return mixed
+     * @return mixed config parameter value.
      */
     public function getValue()
     {
@@ -126,6 +128,16 @@ class Item extends Model
     {
         return [
             'value' => $this->label,
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeHints()
+    {
+        return [
+            'value' => $this->description
         ];
     }
 
@@ -192,13 +204,13 @@ class Item extends Model
                 throw new Exception('Key "' . $name . '" not present!');
             }
         } elseif (is_object($source)) {
-            if (is_a($source, 'CModule') && $name == 'components') {
-                $result = $source->getComponents(false);
+            if ($name === 'components' && ($source instanceof ServiceLocator)) {
+                $result = $source->getComponents(true);
             } else {
                 if (isset($source->$name)) {
                     $result = $source->$name;
                 } else {
-                    if (is_a($source, 'ArrayAccess')) {
+                    if ($source instanceof \ArrayAccess) {
                         $result = $source[$name];
                     } else {
                         throw new Exception('Property "' . get_class($source) . '::' . $name . '" not present!');
