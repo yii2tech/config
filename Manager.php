@@ -43,9 +43,9 @@ use yii\helpers\ArrayHelper;
  *                         ['required']
  *                     ],
  *                 ],
- *                 'validationKey' => [
- *                     'path' => 'components.request.cookieValidationKey',
- *                     'label' => 'Cookie Validation Key',
+ *                 'nullDisplay' => [
+ *                     'path' => 'components.formatter.nullDisplay',
+ *                     'label' => 'HTML representing not set value',
  *                     'rules' => [
  *                         ['required']
  *                     ],
@@ -210,7 +210,7 @@ class Manager extends Component implements BootstrapInterface
     {
         if (!is_array($this->_items)) {
             if (is_string($this->_items)) {
-                $fileName = $this->_items;
+                $fileName = Yii::getAlias($this->_items);
                 if (file_exists($fileName)) {
                     $this->_items = require($fileName);
                     if (!is_array($this->_items)) {

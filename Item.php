@@ -62,13 +62,9 @@ class Item extends Model
      */
     public $path;
     /**
-     * @var string input type
+     * @var array options, which can be used to composed configuration form input fields.
      */
-    public $type;
-    /**
-     * @var array options for select box
-     */
-    public $items;
+    public $inputOptions = [];
     /**
      * @var mixed config parameter value.
      */
