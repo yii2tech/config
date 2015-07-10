@@ -53,9 +53,7 @@ class StorageDb extends Storage
     }
 
     /**
-     * Saves given values.
-     * @param array $values in format: 'id' => 'value'
-     * @return boolean success.
+     * @inheritdoc
      */
     public function save(array $values)
     {
@@ -70,8 +68,7 @@ class StorageDb extends Storage
     }
 
     /**
-     * Returns previously saved values.
-     * @return array values in format: 'id' => 'value'
+     * @inheritdoc
      */
     public function get()
     {
@@ -85,8 +82,7 @@ class StorageDb extends Storage
     }
 
     /**
-     * Clears all saved values.
-     * @return boolean success.
+     * @inheritdoc
      */
     public function clear()
     {

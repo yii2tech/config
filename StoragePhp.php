@@ -26,9 +26,7 @@ class StoragePhp extends Storage
 
 
     /**
-     * Saves given values.
-     * @param array $values in format: 'id' => 'value'
-     * @return boolean success.
+     * @inheritdoc
      */
     public function save(array $values)
     {
@@ -40,8 +38,7 @@ class StoragePhp extends Storage
     }
 
     /**
-     * Returns previously saved values.
-     * @return array values in format: 'id' => 'value'
+     * @inheritdoc
      */
     public function get()
     {
@@ -54,8 +51,7 @@ class StoragePhp extends Storage
     }
 
     /**
-     * Clears all saved values.
-     * @return boolean success.
+     * @inheritdoc
      */
     public function clear()
     {
