@@ -4,10 +4,6 @@ namespace yii2tech\tests\unit\config;
 
 use yii\helpers\ArrayHelper;
 use Yii;
-use yii\helpers\FileHelper;
-use yii2tech\tests\unit\activemail\data\Mailer;
-use yii2tech\tests\unit\activemail\data\TemplateStorage;
-use yii2tech\tests\unit\activemail\data\View;
 
 /**
  * Base class for the test cases.
