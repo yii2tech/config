@@ -103,7 +103,7 @@ class Manager extends Component implements BootstrapInterface
     /**
      * @var integer duration of cache for models in seconds.
      * '0' means never expire.
-     * Set this parameter to a negative integer to aviod caching.
+     * Set this parameter to a negative integer to avoid caching.
      */
     public $cacheDuration = 0;
 
