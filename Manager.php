@@ -103,7 +103,7 @@ class Manager extends Component implements BootstrapInterface
     /**
      * @var integer duration of cache for models in seconds.
      * '0' means never expire.
-     * Set this parameter to a negative integer to aviod caching.
+     * Set this parameter to a negative integer to avoid caching.
      */
     public $cacheDuration = 0;
 
@@ -260,7 +260,9 @@ class Manager extends Component implements BootstrapInterface
         foreach ($this->getItems() as $item) {
             $itemConfigs[] = $item->composeConfig();
         }
-        return call_user_func_array(['yii\helpers\ArrayHelper', 'merge'], $itemConfigs);
+        return count($itemConfigs) > 1
+            ? call_user_func_array(['yii\helpers\ArrayHelper', 'merge'], $itemConfigs)
+            : $itemConfigs[0];
     }
 
     /**
