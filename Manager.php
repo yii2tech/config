@@ -260,7 +260,9 @@ class Manager extends Component implements BootstrapInterface
         foreach ($this->getItems() as $item) {
             $itemConfigs[] = $item->composeConfig();
         }
-        return call_user_func_array(['yii\helpers\ArrayHelper', 'merge'], $itemConfigs);
+        return count($itemConfigs) > 1
+            ? call_user_func_array(['yii\helpers\ArrayHelper', 'merge'], $itemConfigs)
+            : $itemConfigs[0];
     }
 
     /**
