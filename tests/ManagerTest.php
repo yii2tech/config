@@ -336,4 +336,29 @@ class ManagerTest extends TestCase
         ]);
         $this->assertEquals('newLayout', Yii::$app->getModule('admin')->layout, 'Unable to override module.');
     }
+
+    /**
+     * @depends testComposeConfig
+     *
+     * @see https://github.com/yii2tech/config/issues/1
+     */
+    public function testComposeConfigFromSingleItem()
+    {
+        $manager = new Manager();
+        $items = [
+            'singleItem' => [
+                'path' => 'params.singleItem',
+                'value' => 'single item',
+            ],
+        ];
+        $manager->setItems($items);
+
+        $config = $manager->composeConfig();
+        $expectedConfig = [
+            'params' => [
+                'singleItem' => 'single item',
+            ],
+        ];
+        $this->assertEquals($expectedConfig, $config, 'Wrong config composed!');
+    }
 }

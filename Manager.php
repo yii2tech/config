@@ -78,18 +78,6 @@ use yii\helpers\ArrayHelper;
 class Manager extends Component implements BootstrapInterface
 {
     /**
-     * @var array[]|Item[]|string config items in format: id => configuration.
-     * This filed can be setup as PHP file name, which returns the array of items.
-     */
-    private $_items = [];
-    /**
-     * @var Storage|array config storage.
-     * It should be [[Storage]] instance or its array configuration.
-     */
-    private $_storage = [
-        'class' => 'yii2tech\config\StorageDb'
-    ];
-    /**
      * @var Cache|array|string id of the cache object or the application component ID of the DB connection.
      * After the Manager object is created, if you want to change this property, you should only assign it
      * with a Cache object.
@@ -103,9 +91,22 @@ class Manager extends Component implements BootstrapInterface
     /**
      * @var integer duration of cache for models in seconds.
      * '0' means never expire.
-     * Set this parameter to a negative integer to aviod caching.
+     * Set this parameter to a negative integer to avoid caching.
      */
     public $cacheDuration = 0;
+
+    /**
+     * @var array[]|Item[]|string config items in format: id => configuration.
+     * This filed can be setup as PHP file name, which returns the array of items.
+     */
+    private $_items = [];
+    /**
+     * @var Storage|array config storage.
+     * It should be [[Storage]] instance or its array configuration.
+     */
+    private $_storage = [
+        'class' => 'yii2tech\config\StorageDb'
+    ];
 
 
     /**
@@ -256,11 +257,11 @@ class Manager extends Component implements BootstrapInterface
      */
     public function composeConfig()
     {
-        $itemConfigs = [];
+        $config = [];
         foreach ($this->getItems() as $item) {
-            $itemConfigs[] = $item->composeConfig();
+            $config = ArrayHelper::merge($config, $item->composeConfig());
         }
-        return call_user_func_array(['yii\helpers\ArrayHelper', 'merge'], $itemConfigs);
+        return $config;
     }
 
     /**
