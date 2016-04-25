@@ -1,8 +1,8 @@
 Yii 2 Application Runtime Configuration extension Change Log
 ============================================================
 
-1.0.1 under development
------------------------
+1.0.1, April 25, 2016
+---------------------
 
 - Bug #1: Fixed `Manager::composeConfig()` triggers PHP Warning in case `items` contains only single element (klimov-paul)
 
