@@ -1,8 +1,8 @@
 Yii 2 Application Runtime Configuration extension Change Log
 ============================================================
 
-1.0.2 under development
------------------------
+1.0.2, June 3, 2016
+-------------------
 
 - Enh #4: `StoragePhp` now invalidates script file cache performed by 'OPCache' or 'APC' (klimov-paul)
 
