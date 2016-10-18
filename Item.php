@@ -12,6 +12,7 @@ use yii\base\Exception;
 use yii\base\InvalidConfigException;
 use yii\base\Model;
 use yii\di\ServiceLocator;
+use yii\helpers\Inflector;
 use yii\validators\Validator;
 
 /**
@@ -32,10 +33,6 @@ class Item extends Model
      * @var mixed config parameter unique identifier.
      */
     public $id;
-    /**
-     * @var string label for the [[value]] attribute.
-     */
-    public $label = 'Value';
     /**
      * @var string brief description for the config item.
      */
@@ -66,10 +63,32 @@ class Item extends Model
      */
     public $inputOptions = [];
     /**
+     * @var string label for the [[value]] attribute.
+     */
+    private $_label;
+    /**
      * @var mixed config parameter value.
      */
     private $_value;
 
+    /**
+     * @param mixed $label config parameter label.
+     */
+    public function setLabel($label)
+    {
+        $this->_label = $label;
+    }
+
+    /**
+     * @return mixed config parameter label.
+     */
+    public function getLabel()
+    {
+        if ($this->_label === null) {
+            $this->_label = Inflector::camel2words($this->id);
+        }
+        return $this->_label;
+    }
 
     /**
      * @param mixed $value config parameter value.
