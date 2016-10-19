@@ -42,16 +42,37 @@ class ItemTest extends TestCase
         $value = 'testValue';
         $model->setValue($value);
         $this->assertEquals($value, $model->getValue(), 'Unable to setup value!');
+
+        $label = 'Test Label';
+        $model->setLabel($label);
+        $this->assertEquals($label, $model->getLabel(), 'Unable to setup label!');
     }
 
+    /**
+     * @depends testSetGet
+     */
     public function testLabel()
     {
         $model = new Item();
 
-        $label = 'TestPlaceholderLabel';
+        $label = 'Test Placeholder Label';
         $model->label = $label;
 
         $this->assertEquals($label, $model->getAttributeLabel('value'), 'Wrong value label!');
+    }
+
+    /**
+     * @depends testLabel
+     */
+    public function testDefaultLabel()
+    {
+        $model = new Item();
+        $model->id = 'testItem';
+        $this->assertEquals('Test Item', $model->getAttributeLabel('value'), 'Unable to generate default value from string ID!');
+
+        $model = new Item();
+        $model->id = 10;
+        $this->assertEquals('Value', $model->getAttributeLabel('value'), 'Wrong default label for not string ID!');
     }
 
     public function testGetHint()

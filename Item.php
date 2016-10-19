@@ -22,6 +22,7 @@ use yii\validators\Validator;
  * @see Manager
  *
  * @property mixed $value config parameter value.
+ * @property string $label label for the [[value]] attribute.
  *
  * @author Paul Klimov <klimov.paul@gmail.com>
  * @since 1.0
@@ -32,10 +33,6 @@ class Item extends Model
      * @var mixed config parameter unique identifier.
      */
     public $id;
-    /**
-     * @var string label for the [[value]] attribute.
-     */
-    public $label = 'Value';
     /**
      * @var string brief description for the config item.
      */
@@ -65,10 +62,15 @@ class Item extends Model
      * @var array options, which can be used to composed configuration form input fields.
      */
     public $inputOptions = [];
+
     /**
      * @var mixed config parameter value.
      */
     private $_value;
+    /**
+     * @var string label for the [[value]] attribute.
+     */
+    private $_label;
 
 
     /**
@@ -91,6 +93,27 @@ class Item extends Model
     }
 
     /**
+     * @return string label for the [[value]] attribute.
+     * @since 1.0.3
+     */
+    public function getLabel()
+    {
+        if ($this->_label === null) {
+            $this->_label = is_string($this->id) ? $this->generateAttributeLabel($this->id) : 'Value';
+        }
+        return $this->_label;
+    }
+
+    /**
+     * @param string|null $label label for the [[value]] attribute.
+     * @since 1.0.3
+     */
+    public function setLabel($label)
+    {
+        $this->_label = $label;
+    }
+
+    /**
      * Returns the config path parts.
      * @return array config path parts.
      */
@@ -100,17 +123,15 @@ class Item extends Model
             $this->path = $this->composeDefaultPath();
         }
         if (is_array($this->path)) {
-            $pathParts = $this->path;
-        } else {
-            $pathParts = explode('.', $this->path);
+            return $this->path;
         }
-        return $pathParts;
+        return explode('.', $this->path);
     }
 
     /**
      * @inheritdoc
      */
-    public function attribute()
+    public function attributes()
     {
         return [
             'value'
@@ -123,7 +144,7 @@ class Item extends Model
     public function attributeLabels()
     {
         return [
-            'value' => $this->label,
+            'value' => $this->getLabel(),
         ];
     }
 
@@ -192,7 +213,9 @@ class Item extends Model
         if (empty($pathParts)) {
             throw new Exception('Empty extraction path.');
         }
+
         $name = array_shift($pathParts);
+
         if (is_array($source)) {
             if (array_key_exists($name, $source)) {
                 $result = $source[$name];
@@ -216,11 +239,11 @@ class Item extends Model
         } else {
             throw new Exception('Unable to extract path "' . implode('.', $pathParts) . '" from "' . gettype($source) . '"');
         }
+
         if (empty($pathParts)) {
             return $result;
-        } else {
-            return $this->findConfigPathValue($result, $pathParts);
         }
+        return $this->findConfigPathValue($result, $pathParts);
     }
 
     /**
