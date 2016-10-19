@@ -5,7 +5,7 @@ Yii 2 Application Runtime Configuration extension Change Log
 -----------------------
 
 - Bug: Fixed `Item::attributes()` returns incorrect attributes list (klimov-paul)
-- Enh #7: `Item::$label` converted into virtual property, allowing its automatic generation from `Item::$id` value (klimov-paul)
+- Enh #7: `Item::$label` converted into virtual property, allowing its automatic generation from `Item::$id` value (nexen2, klimov-paul)
 
 
 1.0.2, June 3, 2016
