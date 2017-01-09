@@ -68,4 +68,15 @@ class StorageActiveRecord extends Storage
         $activeRecordClass::deleteAll();
         return true;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function clearValue($id)
+    {
+        /* @var $activeRecordClass \yii\db\ActiveRecordInterface */
+        $activeRecordClass = $this->activeRecordClass;
+        $activeRecordClass::deleteAll(['id' => $id]);
+        return true;
+    }
 }

@@ -81,4 +81,20 @@ class StoragePhpTest extends TestCase
         $this->assertTrue($storage->clear(), 'Unable to clear values!');
         $this->assertEquals([], $storage->get(), 'Values are not cleared!');
     }
+
+    /**
+     * @depends testGet
+     */
+    public function testClearItem()
+    {
+        $storage = $this->createTestStorage();
+        $values = [
+            'name1' => 'value1',
+            'name2' => 'value2',
+        ];
+        $storage->save($values);
+
+        $this->assertTrue($storage->clearValue('name1'), 'Unable to clear item value!');
+        $this->assertEquals(['name2' => 'value2'], $storage->get(), 'Item value is not cleared!');
+    }
 }

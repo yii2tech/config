@@ -20,7 +20,7 @@ abstract class Storage extends Component
     /**
      * Saves given values.
      * @param array $values in format: 'id' => 'value'
-     * @return boolean success.
+     * @return bool success.
      */
     abstract public function save(array $values);
 
@@ -32,7 +32,20 @@ abstract class Storage extends Component
 
     /**
      * Clears all saved values.
-     * @return boolean success.
+     * @return bool success.
      */
     abstract public function clear();
+
+    /**
+     * Clear saved value for the specified item.
+     * @param string $id ID of the item to be cleared.
+     * @return bool success.
+     * @since 1.0.3
+     */
+    public function clearValue($id)
+    {
+        $items = $this->get();
+        unset($items[$id]);
+        return $this->save($items);
+    }
 }

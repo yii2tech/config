@@ -81,4 +81,13 @@ class StorageMongoDb extends Storage
         $this->db->getCollection($this->collection)->remove();
         return true;
     }
-} 
+
+    /**
+     * @inheritdoc
+     */
+    public function clearValue($id)
+    {
+        $this->db->getCollection($this->collection)->remove(['id' => $id]);
+        return true;
+    }
+}

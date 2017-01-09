@@ -89,8 +89,8 @@ class Manager extends Component implements BootstrapInterface
      */
     public $cacheId = __CLASS__;
     /**
-     * @var integer duration of cache for models in seconds.
-     * '0' means never expire.
+     * @var int duration of cache for models in seconds.
+     * `0` means never expire.
      * Set this parameter to a negative integer to avoid caching.
      */
     public $cacheDuration = 0;
@@ -221,7 +221,7 @@ class Manager extends Component implements BootstrapInterface
                     throw new InvalidConfigException('File "' . $this->_items . '" does not exist.');
                 }
             } else {
-                throw new InvalidConfigException('"' . get_class($this) . '::items" should be array or file name containing it.');
+                throw new InvalidConfigException('"' . get_class($this) . '::$items" should be array or file name containing it.');
             }
         }
     }
@@ -266,7 +266,7 @@ class Manager extends Component implements BootstrapInterface
 
     /**
      * Saves the current config item values into the persistent storage.
-     * @return boolean success.
+     * @return bool success.
      */
     public function saveValues()
     {
@@ -288,11 +288,26 @@ class Manager extends Component implements BootstrapInterface
 
     /**
      * Clears config item values saved in the persistent storage.
-     * @return boolean success.
+     * @return bool success.
      */
     public function clearValues()
     {
         $result = $this->getStorage()->clear();
+        if ($result) {
+            $this->cache->delete($this->cacheId);
+        }
+        return $result;
+    }
+
+    /**
+     * Clears config item values saved in the persistent storage.
+     * @param string $id ID of the item to be cleared.
+     * @return bool success.
+     * @since 1.0.3
+     */
+    public function clearValue($id)
+    {
+        $result = $this->getStorage()->clearValue($id);
         if ($result) {
             $this->cache->delete($this->cacheId);
         }
@@ -318,7 +333,7 @@ class Manager extends Component implements BootstrapInterface
 
     /**
      * Performs the validation for all config item models at once.
-     * @return boolean whether the validation is successful without any error.
+     * @return bool whether the validation is successful without any error.
      */
     public function validate()
     {

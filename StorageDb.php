@@ -89,4 +89,15 @@ class StorageDb extends Storage
         $this->db->createCommand()->delete($this->table)->execute();
         return true;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function clearValue($id)
+    {
+        $this->db->createCommand()
+            ->delete($this->table, ['id' => $id])
+            ->execute();
+        return true;
+    }
 }
