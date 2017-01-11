@@ -1,7 +1,7 @@
 Yii 2 Application Runtime Configuration extension Change Log
 ============================================================
 
-1.0.3 under development
+1.0.3, January 11, 2017
 -----------------------
 
 - Bug: Fixed `Item::attributes()` returns incorrect attributes list (klimov-paul)
