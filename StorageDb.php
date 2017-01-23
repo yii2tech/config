@@ -26,11 +26,15 @@ use yii\di\Instance;
  * $this->createTable($tableName, $columns);
  * ```
  *
+ * You may use same table for multiple configuration storage providing [[filter]] value.
+ *
  * @author Paul Klimov <klimov.paul@gmail.com>
  * @since 1.0
  */
 class StorageDb extends Storage
 {
+    use StorageFilterTrait;
+
     /**
      * @var Connection|array|string the DB connection object or the application component ID of the DB connection.
      * After the StorageDb object is created, if you want to change this property, you should only assign it
@@ -59,11 +63,15 @@ class StorageDb extends Storage
     {
         $this->clear();
         $data = [];
+        $filter = $this->composeFilterCondition();
+        $columns = array_merge(array_keys($filter), ['id', 'value']);
+        $filterValues = array_values($filter);
         foreach ($values as $id => $value) {
-            $data[] = [$id, $value];
+            $data[] = array_merge($filterValues, [$id, $value]);
         }
-        $command = $this->db->createCommand()->batchInsert($this->table, ['id', 'value'], $data);
-        $insertedRowsCount = $command->execute();
+        $insertedRowsCount = $this->db->createCommand()
+            ->batchInsert($this->table, $columns, $data)
+            ->execute();
         return (count($values) === $insertedRowsCount);
     }
 
@@ -73,7 +81,9 @@ class StorageDb extends Storage
     public function get()
     {
         $query = new Query();
-        $rows = $query->from($this->table)->all();
+        $rows = $query->from($this->table)
+            ->andWhere($this->composeFilterCondition())
+            ->all();
         $values = [];
         foreach ($rows as $row) {
             $values[$row['id']] = $row['value'];
@@ -86,7 +96,9 @@ class StorageDb extends Storage
      */
     public function clear()
     {
-        $this->db->createCommand()->delete($this->table)->execute();
+        $this->db->createCommand()
+            ->delete($this->table, $this->composeFilterCondition())
+            ->execute();
         return true;
     }
 
@@ -96,7 +108,7 @@ class StorageDb extends Storage
     public function clearValue($id)
     {
         $this->db->createCommand()
-            ->delete($this->table, ['id' => $id])
+            ->delete($this->table, $this->composeFilterCondition(['id' => $id]))
             ->execute();
         return true;
     }

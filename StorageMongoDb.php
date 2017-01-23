@@ -16,11 +16,15 @@ use yii\mongodb\Query;
  *
  * This storage requires [yiisoft/yii2-mongodb](https://github.com/yiisoft/yii2-mongodb) extension installed.
  *
+ * You may use same collection for multiple configuration storage providing [[filter]] value.
+ *
  * @author Paul Klimov <klimov.paul@gmail.com>
  * @since 1.0
  */
 class StorageMongoDb extends Storage
 {
+    use StorageFilterTrait;
+
     /**
      * @var Connection|array|string the MongoDB connection object or the application component ID of the MongoDB connection.
      * After the StorageMongoDb object is created, if you want to change this property, you should only assign it
@@ -50,10 +54,13 @@ class StorageMongoDb extends Storage
         $this->clear();
         $data = [];
         foreach ($values as $id => $value) {
-            $data[] = [
-                'id' => $id,
-                'value' => $value
-            ];
+            $data[] = array_merge(
+                $this->composeFilterCondition(),
+                [
+                    'id' => $id,
+                    'value' => $value
+                ]
+            );
         }
         $this->db->getCollection($this->collection)->batchInsert($data);
         return true;
@@ -65,7 +72,9 @@ class StorageMongoDb extends Storage
     public function get()
     {
         $query = new Query();
-        $rows = $query->from($this->collection)->all();
+        $rows = $query->from($this->collection)
+            ->andWhere($this->composeFilterCondition())
+            ->all();
         $values = [];
         foreach ($rows as $row) {
             $values[$row['id']] = $row['value'];
@@ -78,7 +87,7 @@ class StorageMongoDb extends Storage
      */
     public function clear()
     {
-        $this->db->getCollection($this->collection)->remove();
+        $this->db->getCollection($this->collection)->remove($this->composeFilterCondition());
         return true;
     }
 
@@ -87,7 +96,7 @@ class StorageMongoDb extends Storage
      */
     public function clearValue($id)
     {
-        $this->db->getCollection($this->collection)->remove(['id' => $id]);
+        $this->db->getCollection($this->collection)->remove($this->composeFilterCondition(['id' => $id]));
         return true;
     }
 }

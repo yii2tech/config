@@ -10,6 +10,20 @@ namespace yii2tech\config;
 /**
  * StorageActiveRecord is an configuration storage based on ActiveRecord.
  *
+ * If you are using relational database, you can create table for such ActiveRecord using following migration code:
+ *
+ * ```php
+ * $tableName = 'AppConfig';
+ * $columns = [
+ *     'id' => 'string',
+ *     'value' => 'text',
+ *     'PRIMARY KEY(id)',
+ * ];
+ * $this->createTable($tableName, $columns);
+ * ```
+ *
+ * You may use same ActiveRecord class for multiple configuration storage providing [[filter]] value.
+ *
  * @see \yii\db\ActiveRecordInterface
  *
  * @author Paul Klimov <klimov.paul@gmail.com>
@@ -17,6 +31,8 @@ namespace yii2tech\config;
  */
 class StorageActiveRecord extends Storage
 {
+    use StorageFilterTrait;
+
     /**
      * @var string name of the ActiveRecord class, which should be used for data finding and saving.
      * This class should match [[\yii\db\ActiveRecordInterface]] interface.
@@ -32,12 +48,14 @@ class StorageActiveRecord extends Storage
         $activeRecordClass = $this->activeRecordClass;
         $this->clear();
         $result = true;
+        $filterAttributes = $this->composeFilterCondition();
         foreach ($values as $id => $value) {
             /* @var $model \yii\db\ActiveRecordInterface */
-            $data[] = [$id, $value];
             $model = new $activeRecordClass();
-            $model->id = $id;
-            $model->value = $value;
+            $attributes = array_merge($filterAttributes, ['id' => $id, 'value' => $value]);
+            foreach ($attributes as $attributeName => $attributeValue) {
+                $model->$attributeName = $attributeValue;
+            }
             $result = $result && $model->save(false);
         }
         return $result;
@@ -50,7 +68,10 @@ class StorageActiveRecord extends Storage
     {
         /* @var $activeRecordClass \yii\db\ActiveRecordInterface */
         $activeRecordClass = $this->activeRecordClass;
-        $rows = $activeRecordClass::find()->asArray(true)->all();
+        $rows = $activeRecordClass::find()
+            ->andWhere($this->composeFilterCondition())
+            ->asArray(true)
+            ->all();
         $values = [];
         foreach ($rows as $row) {
             $values[$row['id']] = $row['value'];
@@ -65,7 +86,7 @@ class StorageActiveRecord extends Storage
     {
         /* @var $activeRecordClass \yii\db\ActiveRecordInterface */
         $activeRecordClass = $this->activeRecordClass;
-        $activeRecordClass::deleteAll();
+        $activeRecordClass::deleteAll($this->composeFilterCondition());
         return true;
     }
 
@@ -76,7 +97,7 @@ class StorageActiveRecord extends Storage
     {
         /* @var $activeRecordClass \yii\db\ActiveRecordInterface */
         $activeRecordClass = $this->activeRecordClass;
-        $activeRecordClass::deleteAll(['id' => $id]);
+        $activeRecordClass::deleteAll($this->composeFilterCondition(['id' => $id]));
         return true;
     }
 }

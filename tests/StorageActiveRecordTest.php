@@ -32,6 +32,7 @@ class StorageActiveRecordTest extends TestCase
         $columns = [
             'id' => 'string',
             'value' => 'string',
+            'group' => 'string',
         ];
         Yii::$app->db->createCommand()->createTable(ConfigActiveRecord::tableName(), $columns)->execute();
     }
@@ -92,5 +93,33 @@ class StorageActiveRecordTest extends TestCase
 
         $this->assertTrue($storage->clearValue('name1'), 'Unable to clear item value!');
         $this->assertEquals(['name2' => 'value2'], $storage->get(), 'Item value is not cleared!');
+    }
+
+    /**
+     * @depends testClear
+     */
+    public function testFilterUsage()
+    {
+        $storage1 = $this->createTestStorage();
+        $storage1->filter = ['group' => '1'];
+
+        $storage2 = $this->createTestStorage();
+        $storage2->filter = ['group' => '2'];
+
+        $values1 = [
+            'name' => 'value1',
+        ];
+        $storage1->save($values1);
+        $values2 = [
+            'name' => 'value2',
+        ];
+        $storage2->save($values2);
+
+        $this->assertEquals($values1, $storage1->get());
+        $this->assertEquals($values2, $storage2->get());
+
+        $storage1->clear();
+        $this->assertEquals([], $storage1->get());
+        $this->assertEquals($values2, $storage2->get());
     }
 }
