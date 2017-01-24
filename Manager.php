@@ -12,6 +12,7 @@ use yii\base\BootstrapInterface;
 use yii\base\Component;
 use yii\base\InvalidConfigException;
 use yii\base\InvalidParamException;
+use yii\base\Module;
 use yii\caching\Cache;
 use yii\di\Instance;
 use yii\helpers\ArrayHelper;
@@ -346,8 +347,8 @@ class Manager extends Component implements BootstrapInterface
     }
 
     /**
-     * Configures given module with provided configuration array.
-     * @param \yii\base\Module $module module to be configured.
+     * Configures given module or other object with provided configuration array.
+     * @param Module|object $module module or plain object to be configured.
      * @param array $config configuration array.
      */
     public function configure($module, $config = null)
@@ -355,6 +356,12 @@ class Manager extends Component implements BootstrapInterface
         if ($config === null) {
             $config = $this->fetchConfig();
         }
+
+        if (!$module instanceof Module) {
+            Yii::configure($module, $config);
+            return;
+        }
+
         foreach ($config as $key => $value) {
             switch ($key) {
                 case 'components':

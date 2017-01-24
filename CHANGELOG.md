@@ -5,6 +5,7 @@ Yii 2 Application Runtime Configuration extension Change Log
 -----------------------
 
 - Enh #9: `StorageFilterTrait` created providing ability to use single entity for multiple configuration storage at `StorageDb`, `StorageMongoDb` and `StorageActiveRecord` (klimov-paul)
+- Enh: `Manager::configure()` allows to configure plain object not module only (klimov-paul)
 
 
 1.0.3, January 11, 2017
