@@ -361,4 +361,26 @@ class ManagerTest extends TestCase
         ];
         $this->assertEquals($expectedConfig, $config, 'Wrong config composed!');
     }
+
+    /**
+     * @depends testSetupItemValues
+     */
+    public function testGetItemValue()
+    {
+        $manager = new Manager();
+        $items = [
+            'item1' => [],
+            'item2' => [],
+        ];
+        $manager->setItems($items);
+
+        $itemValues = [
+            'item1' => 'item1value',
+            'item2' => 'item2value',
+        ];
+        $manager->setItemValues($itemValues);
+
+        $this->assertEquals('item1value', $manager->getItemValue('item1'));
+        $this->assertEquals('item2value', $manager->getItemValue('item2'));
+    }
 }

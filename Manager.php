@@ -253,6 +253,18 @@ class Manager extends Component implements BootstrapInterface
     }
 
     /**
+     * Returns value of the particular item.
+     * @param string $id config item ID.
+     * @return mixed item value.
+     * @since 1.0.4
+     */
+    public function getItemValue($id)
+    {
+        $item = $this->getItem($id);
+        return $item->getValue();
+    }
+
+    /**
      * Composes application configuration array from config items.
      * @return array application configuration.
      */
