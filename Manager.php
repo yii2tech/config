@@ -95,6 +95,15 @@ class Manager extends Component implements BootstrapInterface
      * Set this parameter to a negative integer to avoid caching.
      */
     public $cacheDuration = 0;
+    /**
+     * @var bool whether to automatically restore item values from [[storage]] on component initialization.
+     * Enabling this option make sense only in case you wish to use manager as a standalone data storage, using
+     * [[getItemValues()]] or [[getItemValue()]] for the data access.
+     * In cas you invoke [[configure()]], [[fetchConfig()]] or [[restoreValues()]] methods this option should be disabled,
+     * otherwise it will cause redundant storage data reading.
+     * @since 1.0.4
+     */
+    public $autoRestoreValues = false;
 
     /**
      * @var array[]|Item[]|string config items in format: id => configuration.
@@ -117,6 +126,9 @@ class Manager extends Component implements BootstrapInterface
     {
         parent::init();
         $this->cache = Instance::ensure($this->cache, Cache::className());
+        if ($this->autoRestoreValues) {
+            $this->restoreValues();
+        }
     }
 
     /**

@@ -6,6 +6,7 @@ Yii 2 Application Runtime Configuration extension Change Log
 
 - Enh: `Manager::configure()` allows to configure plain object not module only (klimov-paul)
 - Enh: Added `Manager::getItemValue()` allowing to get particular item value (klimov-paul)
+- Enh: Added `Manager::$autoRestoreValues` allowing to automatically restore item values from storage during manager initialization (klimov-paul)
 - Enh #9: `StorageFilterTrait` created providing ability to use single entity for multiple configuration storage at `StorageDb`, `StorageMongoDb` and `StorageActiveRecord` (klimov-paul)
 
 

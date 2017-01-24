@@ -14,22 +14,24 @@ use yii2tech\config\StoragePhp;
  */
 class ManagerTest extends TestCase
 {
+    public function setUp()
+    {
+        parent::setUp();
+        FileHelper::createDirectory($this->getTestFilePath());
+    }
+
     public function tearDown()
     {
-        $fileName = $this->getTestFileName();
-        if (file_exists($fileName)) {
-            unlink($fileName);
-        }
-
+        FileHelper::removeDirectory($this->getTestFilePath());
         parent::tearDown();
     }
 
     /**
      * @return string test file name
      */
-    protected function getTestFileName()
+    protected function getTestFilePath()
     {
-        return Yii::getAlias('@yii2tech/tests/unit/config/runtime') . DIRECTORY_SEPARATOR . 'test_config_' . getmypid() . '.php';
+        return Yii::getAlias('@yii2tech/tests/unit/config/runtime') . DIRECTORY_SEPARATOR . getmypid();
     }
 
     /**
@@ -41,7 +43,7 @@ class ManagerTest extends TestCase
         return new Manager([
             'storage' => [
                 'class' => StoragePhp::className(),
-                'fileName' => $this->getTestFileName(),
+                'fileName' => $this->getTestFilePath() . DIRECTORY_SEPARATOR . 'config.php',
             ],
         ]);
     }
@@ -123,8 +125,7 @@ class ManagerTest extends TestCase
                 'label' => 'item2label'
             ],
         ];
-        $fileName = $this->getTestFileName();
-        FileHelper::createDirectory(dirname($fileName));
+        $fileName = $this->getTestFilePath() . DIRECTORY_SEPARATOR . 'config.php';
         $fileContent = '<?php return ' . var_export($items, true) . ';';
         file_put_contents($fileName, $fileContent);
 
@@ -382,5 +383,34 @@ class ManagerTest extends TestCase
 
         $this->assertEquals('item1value', $manager->getItemValue('item1'));
         $this->assertEquals('item2value', $manager->getItemValue('item2'));
+    }
+
+    /**
+     * @depends testSetupItemValues
+     */
+    public function testAutoRestoreValues()
+    {
+        $itemValues = [
+            'item1' => 'value1',
+            'item2' => 'value2',
+        ];
+
+        $fileName = $this->getTestFilePath() . DIRECTORY_SEPARATOR . 'values.php';
+        $fileContent = '<?php return ' . var_export($itemValues, true) . ';';
+        file_put_contents($fileName, $fileContent);
+
+        $manager = new Manager([
+            'autoRestoreValues' => true,
+            'storage' => [
+                'class' => StoragePhp::className(),
+                'fileName' => $fileName,
+            ],
+            'items' => [
+                'item1' => [],
+                'item2' => [],
+            ]
+        ]);
+
+        $this->assertEquals($itemValues, $manager->getItemValues());
     }
 }
