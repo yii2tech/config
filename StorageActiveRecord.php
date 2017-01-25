@@ -45,10 +45,31 @@ class StorageActiveRecord extends Storage
      */
     public function save(array $values)
     {
+        /* @var $activeRecordClass \yii\db\ActiveRecordInterface */
+        /* @var $existingRecords \yii\db\ActiveRecordInterface[] */
         $activeRecordClass = $this->activeRecordClass;
-        $this->clear();
-        $result = true;
+
         $filterAttributes = $this->composeFilterCondition();
+
+        $existingRecords = $activeRecordClass::find()
+            ->andWhere($filterAttributes)
+            ->all();
+
+        $result = true;
+
+        foreach ($existingRecords as $key => $existingRecord) {
+            if (array_key_exists($existingRecord->id, $values)) {
+                $existingRecord->value = $values[$existingRecord->id];
+                $result = $result && $existingRecord->save(false);
+                unset($values[$existingRecord->id]);
+                unset($existingRecords[$key]);
+            }
+        }
+
+        foreach ($existingRecords as $existingRecord) {
+            $existingRecord->delete();
+        }
+
         foreach ($values as $id => $value) {
             /* @var $model \yii\db\ActiveRecordInterface */
             $model = new $activeRecordClass();

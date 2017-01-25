@@ -33,6 +33,7 @@ class StorageActiveRecordTest extends TestCase
             'id' => 'string',
             'value' => 'string',
             'group' => 'string',
+            'PRIMARY KEY([[id]], [[group]])'
         ];
         Yii::$app->db->createCommand()->createTable(ConfigActiveRecord::tableName(), $columns)->execute();
     }
@@ -121,5 +122,30 @@ class StorageActiveRecordTest extends TestCase
         $storage1->clear();
         $this->assertEquals([], $storage1->get());
         $this->assertEquals($values2, $storage2->get());
+    }
+
+    /**
+     * @depends testSave
+     */
+    public function testUpdate()
+    {
+        $storage = $this->createTestStorage();
+
+        $storage->save([
+            'name1' => 'value1',
+            'name2' => 'value2',
+            'name3' => 'value3',
+        ]);
+
+        ConfigActiveRecord::updateAll(['group' => 'insert']);
+
+        $storage->save([
+            'name1' => 'new-value1',
+            'name4' => 'new-value4',
+        ]);
+
+        $records = ConfigActiveRecord::find()->all();
+        $this->assertCount(2, $records);
+        $this->assertEquals('insert', $records[0]->group);
     }
 }
