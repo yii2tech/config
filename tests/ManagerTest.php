@@ -413,4 +413,14 @@ class ManagerTest extends TestCase
 
         $this->assertEquals($itemValues, $manager->getItemValues());
     }
+
+    public function testDynamicCacheId()
+    {
+        $manager = new Manager([
+            'cacheId' => function () {
+                return 'runtime';
+            }
+        ]);
+        $this->assertEquals('runtime', $manager->cacheId);
+    }
 }

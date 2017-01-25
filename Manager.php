@@ -85,8 +85,15 @@ class Manager extends Component implements BootstrapInterface
      */
     public $cache = 'cache';
     /**
-     * @var string id, which will be used to stored composed application configuration
-     * in the cache.
+     * @var string|callable id, which will be used to stored composed application configuration in the cache.
+     * Since 1.0.4 this field can be specified as a PHP callback, which should return actual cache ID.
+     * For example:
+     *
+     * ```php
+     * function () {
+     *     return 'config-' . Yii::$app->user->id;
+     * }
+     * ```
      */
     public $cacheId = __CLASS__;
     /**
@@ -126,6 +133,11 @@ class Manager extends Component implements BootstrapInterface
     {
         parent::init();
         $this->cache = Instance::ensure($this->cache, Cache::className());
+
+        if (!is_scalar($this->cacheId)) {
+            $this->cacheId = call_user_func($this->cacheId);
+        }
+
         if ($this->autoRestoreValues) {
             $this->restoreValues();
         }
