@@ -97,6 +97,7 @@ class ManagerTest extends TestCase
     public function testCreateItem()
     {
         $manager = new Manager();
+        $manager->source = new \stdClass();
 
         $itemId = 'testItemId';
         $itemConfig = [
@@ -108,6 +109,7 @@ class ManagerTest extends TestCase
         $item = $manager->getItem($itemId);
         $this->assertTrue(is_object($item), 'Unable to create item from config!');
         $this->assertEquals($itemConfig['label'], $item->label, 'Unable to setup attributes!');
+        $this->assertSame($manager->source, $item->source, 'Unable to pass source to item!');
     }
 
     /**

@@ -111,6 +111,13 @@ class Manager extends Component implements BootstrapInterface
      * @since 1.0.4
      */
     public $autoRestoreValues = false;
+    /**
+     * @var object|null configuration source object for the [[items]].
+     * If not set current Yii application instance will be used.
+     * @see Item::$source
+     * @since 1.0.4
+     */
+    public $source;
 
     /**
      * @var array[]|Item[]|string config items in format: id => configuration.
@@ -225,6 +232,7 @@ class Manager extends Component implements BootstrapInterface
             $config['class'] = Item::className();
         }
         $config['id'] = $id;
+        $config['source'] = $this->source;
         return Yii::createObject($config);
     }
 

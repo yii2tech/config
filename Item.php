@@ -62,6 +62,12 @@ class Item extends Model
      * @var array options, which can be used to composed configuration form input fields.
      */
     public $inputOptions = [];
+    /**
+     * @var object|null configuration source object.
+     * If not set current Yii application instance will be used.
+     * @since 1.0.4
+     */
+    public $source;
 
     /**
      * @var mixed config parameter value.
@@ -198,7 +204,7 @@ class Item extends Model
     public function extractCurrentValue()
     {
         $pathParts = $this->getPathParts();
-        return $this->findConfigPathValue(Yii::$app, $pathParts);
+        return $this->findConfigPathValue($this->source ? $this->source : Yii::$app, $pathParts);
     }
 
     /**

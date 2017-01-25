@@ -215,4 +215,18 @@ class ItemTest extends TestCase
         $model->value = 'value';
         $this->assertEquals($expectedConfig, $model->composeConfig());
     }
+
+    /**
+     * @depends testGetDefaultValue
+     */
+    public function testCustomSource()
+    {
+        $source = new \stdClass();
+        $source->someField = 'some-value';
+
+        $model = new Item();
+        $model->source = $source;
+        $model->path = ['someField'];
+        $this->assertEquals($source->someField, $model->getValue(), 'Wrong default value from custom source!');
+    }
 }
