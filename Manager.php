@@ -70,7 +70,7 @@ use yii\helpers\ArrayHelper;
  * @see Item
  * @see Storage
  *
- * @property array[]|Item[]|string $items public alias of {@link _items}.
+ * @property array[]|Item[]|string|callable $items public alias of {@link _items}.
  * @property Storage|array $storage public alias of {@link _storage}.
  *
  * @author Paul Klimov <klimov.paul@gmail.com>
@@ -120,8 +120,21 @@ class Manager extends Component implements BootstrapInterface
     public $source;
 
     /**
-     * @var array[]|Item[]|string config items in format: id => configuration.
+     * @var array[]|Item[]|string|callable config items in format: id => configuration.
      * This filed can be setup as PHP file name, which returns the array of items.
+     * Since 1.0.4 this value can be specified as a PHP callback, which should return actual items configuration.
+     * For example:
+     *
+     * ```php
+     * function () {
+     *     return [
+     *         'appName' => [
+     *             'path' => 'name',
+     *             'label' => Yii::t('app', 'Application Name'),
+     *         ]
+     *     ];
+     * }
+     * ```
      */
     private $_items = [];
     /**
@@ -254,7 +267,11 @@ class Manager extends Component implements BootstrapInterface
                     throw new InvalidConfigException('File "' . $this->_items . '" does not exist.');
                 }
             } else {
-                throw new InvalidConfigException('"' . get_class($this) . '::$items" should be array or file name containing it.');
+                $items = call_user_func($this->_items);
+                if (!is_array($items)) {
+                    throw new InvalidConfigException('Callback for "' . get_class($this) . '::$items" should return an array.');
+                }
+                $this->_items = $items;
             }
         }
     }

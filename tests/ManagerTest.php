@@ -425,4 +425,23 @@ class ManagerTest extends TestCase
         ]);
         $this->assertEquals('runtime', $manager->cacheId);
     }
+
+    /**
+     * @depends testCreateItem
+     */
+    public function testSetItemsCallback()
+    {
+        $manager = new Manager();
+
+        $manager->setItems(function() {
+            return [
+                'callbackItem' => [
+                    'label' => 'callback'
+                ]
+            ];
+        });
+        $item = $manager->getItem('callbackItem');
+        $this->assertTrue(is_object($item), 'Unable to define item from callback!');
+        $this->assertEquals('callback', $item->label, 'Unable to setup attributes!');
+    }
 }
