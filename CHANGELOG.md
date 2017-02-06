@@ -1,7 +1,7 @@
 Yii 2 Application Runtime Configuration extension Change Log
 ============================================================
 
-1.0.4 under development
+1.0.4, February 6, 2017
 -----------------------
 
 - Enh: `Manager::configure()` allows to configure plain object not module only (klimov-paul)
