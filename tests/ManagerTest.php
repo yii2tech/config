@@ -42,7 +42,7 @@ class ManagerTest extends TestCase
     {
         return new Manager([
             'storage' => [
-                'class' => StoragePhp::className(),
+                '__class' => StoragePhp::class,
                 'fileName' => $this->getTestFilePath() . DIRECTORY_SEPARATOR . 'config.php',
             ],
         ]);
@@ -293,7 +293,7 @@ class ManagerTest extends TestCase
             'name' => 'initial name',
             'modules' => [
                 'admin' => [
-                    'class' => 'yii\base\Module',
+                    '__class' => \yii\base\Module::class,
                     'layout' => 'default',
                 ],
             ],
@@ -404,7 +404,7 @@ class ManagerTest extends TestCase
         $manager = new Manager([
             'autoRestoreValues' => true,
             'storage' => [
-                'class' => StoragePhp::className(),
+                '__class' => StoragePhp::class,
                 'fileName' => $fileName,
             ],
             'items' => [

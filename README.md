@@ -51,7 +51,7 @@ For example:
     ],
     'components' => [
         'configManager' => [
-            'class' => 'yii2tech\config\Manager',
+            '__class' => yii2tech\config\Manager::class,
             'items' => [
                 'appName' => [
                     'path' => 'name',
@@ -263,11 +263,11 @@ user settings as use it to retrieve it. For example:
 ```php
 [
     'components' => [
-        // no application boostap!
+        // no application bootstrap!!!
         'userInterfaceConfig' => [
-            'class' => 'yii2tech\config\Manager',
+            '__class' => yii2tech\config\Manager::class,
             'storage' => [
-                'class' => 'yii2tech\config\StorageDb',
+                '__class' => yii2tech\config\StorageDb::class,
                 'autoRestoreValues' => true, // restore config values from storage at component initialization
                 'filter' => function () {
                     return [
@@ -332,7 +332,7 @@ class SomeComponent extends Component
             $this->_configManager = new Manager([
                 'source' => $this,
                 'storage' => [
-                    'class' => 'yii2tech\config\StorageDb',
+                    '__class' => \yii2tech\config\StorageDb::class,
                     'table' => 'SomeComponentConfig',
                 ],
                 'items' => [

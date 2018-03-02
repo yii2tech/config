@@ -20,7 +20,7 @@ class StorageActiveRecordTest extends TestCase
     protected function createTestStorage()
     {
         return new StorageActiveRecord([
-            'activeRecordClass' => ConfigActiveRecord::className(),
+            'activeRecordClass' => ConfigActiveRecord::class,
         ]);
     }
 

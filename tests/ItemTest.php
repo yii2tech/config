@@ -24,7 +24,7 @@ class ItemTest extends TestCase
             ],
             'modules' => [
                 'admin' => [
-                    'class' => 'yii\base\Module',
+                    '__class' => \yii\base\Module::class,
                     'layout' => 'default',
                 ],
             ],

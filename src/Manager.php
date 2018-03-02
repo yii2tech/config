@@ -7,13 +7,13 @@
 
 namespace yii2tech\config;
 
+use Psr\SimpleCache\CacheInterface;
 use Yii;
 use yii\base\BootstrapInterface;
 use yii\base\Component;
 use yii\base\InvalidConfigException;
-use yii\base\InvalidParamException;
+use yii\base\InvalidArgumentException;
 use yii\base\Module;
-use yii\caching\Cache;
 use yii\di\Instance;
 use yii\helpers\ArrayHelper;
 
@@ -35,7 +35,7 @@ use yii\helpers\ArrayHelper;
  *     ],
  *     'components' => [
  *         'configManager' => [
- *             'class' => 'yii2tech\config\Manager',
+ *             '__class' => yii2tech\config\Manager::class,
  *             'items' => [
  *                 'appName' => [
  *                     'path' => 'name',
@@ -79,9 +79,9 @@ use yii\helpers\ArrayHelper;
 class Manager extends Component implements BootstrapInterface
 {
     /**
-     * @var Cache|array|string id of the cache object or the application component ID of the DB connection.
+     * @var CacheInterface|array|string id of the cache object or the application component ID of the DB connection.
      * After the Manager object is created, if you want to change this property, you should only assign it
-     * with a Cache object.
+     * with a CacheInterface instance.
      */
     public $cache = 'cache';
     /**
@@ -142,7 +142,7 @@ class Manager extends Component implements BootstrapInterface
      * It should be [[Storage]] instance or its array configuration.
      */
     private $_storage = [
-        'class' => 'yii2tech\config\StorageDb'
+        '__class' => StorageDb::class
     ];
 
 
@@ -152,7 +152,7 @@ class Manager extends Component implements BootstrapInterface
     public function init()
     {
         parent::init();
-        $this->cache = Instance::ensure($this->cache, Cache::className());
+        $this->cache = Instance::ensure($this->cache, CacheInterface::class);
 
         if (!is_scalar($this->cacheId)) {
             $this->cacheId = call_user_func($this->cacheId);
@@ -190,7 +190,7 @@ class Manager extends Component implements BootstrapInterface
     public function getStorage()
     {
         if (!is_object($this->_storage)) {
-            $this->_storage = Instance::ensure($this->_storage, Storage::className());
+            $this->_storage = Instance::ensure($this->_storage, Storage::class);
         }
         return $this->_storage;
     }
@@ -219,13 +219,13 @@ class Manager extends Component implements BootstrapInterface
     /**
      * @param mixed $id item id
      * @return Item config item instance.
-     * @throws InvalidParamException on failure.
+     * @throws InvalidArgumentException on failure.
      */
     public function getItem($id)
     {
         $this->normalizeItems();
         if (!array_key_exists($id, $this->_items)) {
-            throw new InvalidParamException("Unknown config item '{$id}'.");
+            throw new InvalidArgumentException("Unknown config item '{$id}'.");
         }
         if (!is_object($this->_items[$id])) {
             $this->_items[$id] = $this->createItem($id, $this->_items[$id]);
@@ -241,8 +241,8 @@ class Manager extends Component implements BootstrapInterface
      */
     protected function createItem($id, array $config)
     {
-        if (empty($config['class'])) {
-            $config['class'] = Item::className();
+        if (empty($config['__class'])) {
+            $config['__class'] = Item::class;
         }
         $config['id'] = $id;
         $config['source'] = $this->source;
@@ -385,7 +385,7 @@ class Manager extends Component implements BootstrapInterface
     public function fetchConfig()
     {
         $config = $this->cache->get($this->cacheId);
-        if ($config === false) {
+        if ($config === null) {
             $this->restoreValues();
             $config = $this->composeConfig();
             $this->cache->set($this->cacheId, $config, $this->cacheDuration);
