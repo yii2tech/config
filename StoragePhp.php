@@ -26,7 +26,7 @@ class StoragePhp extends Storage
 
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function save(array $values)
     {
@@ -39,7 +39,7 @@ class StoragePhp extends Storage
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function get()
     {
@@ -52,7 +52,7 @@ class StoragePhp extends Storage
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function clear()
     {

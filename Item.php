@@ -135,7 +135,7 @@ class Item extends Model
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributes()
     {
@@ -145,7 +145,7 @@ class Item extends Model
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
@@ -155,7 +155,7 @@ class Item extends Model
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeHints()
     {
@@ -165,7 +165,7 @@ class Item extends Model
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function createValidators()
     {

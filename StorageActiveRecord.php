@@ -41,7 +41,7 @@ class StorageActiveRecord extends Storage
 
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function save(array $values)
     {
@@ -83,7 +83,7 @@ class StorageActiveRecord extends Storage
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function get()
     {
@@ -101,7 +101,7 @@ class StorageActiveRecord extends Storage
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function clear()
     {
@@ -112,7 +112,7 @@ class StorageActiveRecord extends Storage
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function clearValue($id)
     {

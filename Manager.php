@@ -147,7 +147,7 @@ class Manager extends Component implements BootstrapInterface
 
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function init()
     {
@@ -164,7 +164,7 @@ class Manager extends Component implements BootstrapInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function bootstrap($app)
     {

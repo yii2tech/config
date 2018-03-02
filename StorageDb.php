@@ -48,7 +48,7 @@ class StorageDb extends Storage
 
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function init()
     {
@@ -57,7 +57,7 @@ class StorageDb extends Storage
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function save(array $values)
     {
@@ -76,7 +76,7 @@ class StorageDb extends Storage
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function get()
     {
@@ -92,7 +92,7 @@ class StorageDb extends Storage
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function clear()
     {
@@ -103,7 +103,7 @@ class StorageDb extends Storage
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function clearValue($id)
     {

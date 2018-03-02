@@ -64,7 +64,7 @@ class StorageFilter extends Storage
     use StorageFilterTrait;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function save(array $values)
     {
@@ -72,7 +72,7 @@ class StorageFilter extends Storage
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function get()
     {
@@ -80,7 +80,7 @@ class StorageFilter extends Storage
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function clear()
     {

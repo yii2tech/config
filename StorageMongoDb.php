@@ -38,7 +38,7 @@ class StorageMongoDb extends Storage
 
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function init()
     {
@@ -47,7 +47,7 @@ class StorageMongoDb extends Storage
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function save(array $values)
     {
@@ -67,7 +67,7 @@ class StorageMongoDb extends Storage
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function get()
     {
@@ -83,7 +83,7 @@ class StorageMongoDb extends Storage
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function clear()
     {
@@ -92,7 +92,7 @@ class StorageMongoDb extends Storage
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function clearValue($id)
     {
