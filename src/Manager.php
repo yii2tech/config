@@ -118,6 +118,13 @@ class Manager extends Component implements BootstrapInterface
      * @since 1.0.4
      */
     public $source;
+    /**
+     * @var bool whether to shutdown any exception throwing on attempt to apply configuration for object field or property.
+     * If enabled exception will be logged instead of being thrown.
+     * Note: this option will not affect configuration of [[Module::$components]] or [[Module::$modules]].
+     * @since 1.0.6
+     */
+    public $ignoreConfigureError = false;
 
     /**
      * @var array[]|Item[]|string|callable config items in format: id => configuration.
@@ -419,7 +426,9 @@ class Manager extends Component implements BootstrapInterface
         }
 
         if (!$module instanceof Module) {
-            Yii::configure($module, $config);
+            foreach ($config as $key => $value) {
+                $this->configureObjectProperty($module, $key, $value);
+            }
             return;
         }
 
@@ -448,8 +457,31 @@ class Manager extends Component implements BootstrapInterface
                     $module->params = ArrayHelper::merge($module->params, $value);
                     break;
                 default:
-                    $module->$key = $value;
+                    $this->configureObjectProperty($module, $key, $value);
             }
+        }
+    }
+
+    /**
+     * Sets object property with given value, handling the possible exceptions if [[ignoreConfigureError]] is enabled.
+     * @param object $object object to be configured.
+     * @param string $name property name.
+     * @param mixed $value property value.
+     * @since 1.0.5
+     */
+    protected function configureObjectProperty($object, $name, $value)
+    {
+        if (!$this->ignoreConfigureError) {
+            $object->{$name} = $value;
+            return;
+        }
+
+        try {
+            $object->{$name} = $value;
+        } catch (\Exception $e) {
+            Yii::warning($e->getMessage(), __METHOD__);
+        } catch (\Throwable $e) {
+            Yii::warning($e->getMessage(), __METHOD__);
         }
     }
 }
