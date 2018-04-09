@@ -1,8 +1,8 @@
 Yii 2 Application Runtime Configuration extension Change Log
 ============================================================
 
-1.0.6 under development
------------------------
+1.0.6, April 9, 2018
+--------------------
 
 - Enh: Added `Manager::$ignoreConfigureError` allowing to ignore config application errors (klimov-paul)
 
