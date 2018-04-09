@@ -444,4 +444,29 @@ class ManagerTest extends TestCase
         $this->assertTrue(is_object($item), 'Unable to define item from callback!');
         $this->assertEquals('callback', $item->label, 'Unable to setup attributes!');
     }
+
+    /**
+     * @depends testFetchConfig
+     */
+    public function testIgnoreConfigureError()
+    {
+        $manager = new Manager();
+        $manager->ignoreConfigureError = true;
+
+        // module :
+        $this->mockApplication([
+            'name' => 'initial name',
+        ]);
+        $manager->configure(Yii::$app, [
+            'unExistingField' => 'outdated',
+        ]);
+
+        // plain object :
+        $storage = new StoragePhp();
+        $manager->configure($storage, [
+            'unExistingField' => 'outdated',
+        ]);
+
+        $this->assertTrue(true, 'should be no exception');
+    }
 }
