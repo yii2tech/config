@@ -79,6 +79,7 @@ class StorageActiveRecord extends Storage
             }
             $result = $result && $model->save(false);
         }
+
         return $result;
     }
 
@@ -91,12 +92,13 @@ class StorageActiveRecord extends Storage
         $activeRecordClass = $this->activeRecordClass;
         $rows = $activeRecordClass::find()
             ->andWhere($this->composeFilterCondition())
-            ->asArray(true)
             ->all();
+
         $values = [];
         foreach ($rows as $row) {
-            $values[$row['id']] = $row['value'];
+            $values[$row->id] = $row->value;
         }
+
         return $values;
     }
 
@@ -107,8 +109,14 @@ class StorageActiveRecord extends Storage
     {
         /* @var $activeRecordClass \yii\db\ActiveRecordInterface */
         $activeRecordClass = $this->activeRecordClass;
-        $activeRecordClass::deleteAll($this->composeFilterCondition());
-        return true;
+
+        $result = true;
+        foreach ($activeRecordClass::find()->andWhere($this->composeFilterCondition())->all() as $row) {
+            /* @var $row \yii\db\ActiveRecordInterface */
+            $result = $result && ($row->delete() > 0);
+        }
+
+        return $result;
     }
 
     /**
@@ -117,8 +125,16 @@ class StorageActiveRecord extends Storage
     public function clearValue($id)
     {
         /* @var $activeRecordClass \yii\db\ActiveRecordInterface */
+        /* @var $row \yii\db\ActiveRecordInterface */
         $activeRecordClass = $this->activeRecordClass;
-        $activeRecordClass::deleteAll($this->composeFilterCondition(['id' => $id]));
+        $row = $activeRecordClass::find()
+            ->andWhere($this->composeFilterCondition(['id' => $id]))
+            ->one();
+
+        if ($row) {
+            return $row->delete() > 0;
+        }
+
         return true;
     }
 }

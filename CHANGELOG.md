@@ -1,6 +1,12 @@
 Yii 2 Application Runtime Configuration extension Change Log
 ============================================================
 
+1.0.7 under development
+-----------------------
+
+- Bug #17: Fixed `StorageActiveRecord` does not trigger ActiveRecord flow events (klimov-paul)
+
+
 1.0.6, April 9, 2018
 --------------------
 
