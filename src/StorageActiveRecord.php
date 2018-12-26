@@ -38,6 +38,10 @@ class StorageActiveRecord extends Storage
      * This class should match [[\yii\db\ActiveRecordInterface]] interface.
      */
     public $activeRecordClass;
+	
+	public $idAttribute = 'id';
+	
+	public $valueAttribute = 'value';
 
 
     /**
@@ -73,13 +77,12 @@ class StorageActiveRecord extends Storage
         foreach ($values as $id => $value) {
             /* @var $model \yii\db\ActiveRecordInterface */
             $model = new $activeRecordClass();
-            $attributes = array_merge($filterAttributes, ['id' => $id, 'value' => $value]);
+            $attributes = array_merge($filterAttributes, [$this->idAttribute => $id, $this->valueAttribute => $value]);
             foreach ($attributes as $attributeName => $attributeValue) {
                 $model->$attributeName = $attributeValue;
             }
             $result = $result && $model->save(false);
         }
-
         return $result;
     }
 
@@ -92,13 +95,12 @@ class StorageActiveRecord extends Storage
         $activeRecordClass = $this->activeRecordClass;
         $rows = $activeRecordClass::find()
             ->andWhere($this->composeFilterCondition())
+            ->asArray(true)
             ->all();
-
         $values = [];
         foreach ($rows as $row) {
-            $values[$row->id] = $row->value;
+            $values[$row[$this->idAttribute]] = $row[$this->valueAttribute];
         }
-
         return $values;
     }
 
@@ -109,14 +111,8 @@ class StorageActiveRecord extends Storage
     {
         /* @var $activeRecordClass \yii\db\ActiveRecordInterface */
         $activeRecordClass = $this->activeRecordClass;
-
-        $result = true;
-        foreach ($activeRecordClass::find()->andWhere($this->composeFilterCondition())->all() as $row) {
-            /* @var $row \yii\db\ActiveRecordInterface */
-            $result = $result && ($row->delete() > 0);
-        }
-
-        return $result;
+        $activeRecordClass::deleteAll($this->composeFilterCondition());
+        return true;
     }
 
     /**
@@ -125,16 +121,8 @@ class StorageActiveRecord extends Storage
     public function clearValue($id)
     {
         /* @var $activeRecordClass \yii\db\ActiveRecordInterface */
-        /* @var $row \yii\db\ActiveRecordInterface */
         $activeRecordClass = $this->activeRecordClass;
-        $row = $activeRecordClass::find()
-            ->andWhere($this->composeFilterCondition(['id' => $id]))
-            ->one();
-
-        if ($row) {
-            return $row->delete() > 0;
-        }
-
+        $activeRecordClass::deleteAll($this->composeFilterCondition([$this->idAttribute => $id]));
         return true;
     }
 }

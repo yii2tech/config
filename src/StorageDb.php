@@ -45,6 +45,10 @@ class StorageDb extends Storage
      * @var string name of the table, which should store values.
      */
     public $table = 'AppConfig';
+	
+	public $idAttribute = 'id';
+	
+	public $valueAttribute = 'value';
 
 
     /**
@@ -64,7 +68,7 @@ class StorageDb extends Storage
         $this->clear();
         $data = [];
         $filter = $this->composeFilterCondition();
-        $columns = array_merge(array_keys($filter), ['id', 'value']);
+        $columns = array_merge(array_keys($filter), [$this->idAttribute, $this->valueAttribute]);
         $filterValues = array_values($filter);
         foreach ($values as $id => $value) {
             $data[] = array_merge($filterValues, [$id, $value]);
@@ -86,7 +90,7 @@ class StorageDb extends Storage
             ->all();
         $values = [];
         foreach ($rows as $row) {
-            $values[$row['id']] = $row['value'];
+            $values[$row[$this->idAttribute]] = $row[$this->valueAttribute];
         }
         return $values;
     }
@@ -108,7 +112,7 @@ class StorageDb extends Storage
     public function clearValue($id)
     {
         $this->db->createCommand()
-            ->delete($this->table, $this->composeFilterCondition(['id' => $id]))
+            ->delete($this->table, $this->composeFilterCondition([$this->idAttribute => $id]))
             ->execute();
         return true;
     }
