@@ -38,6 +38,16 @@ class StorageActiveRecord extends Storage
      * This class should match [[\yii\db\ActiveRecordInterface]] interface.
      */
     public $activeRecordClass;
+    /**
+     * @var string name of the attribute, which should store config item ID.
+     * @since 1.0.7
+     */
+    public $idAttribute = 'id';
+    /**
+     * @var string name of the attribute, which should store config item value.
+     * @since 1.0.7
+     */
+    public $valueAttribute = 'value';
 
 
     /**
@@ -58,10 +68,10 @@ class StorageActiveRecord extends Storage
         $result = true;
 
         foreach ($existingRecords as $key => $existingRecord) {
-            if (array_key_exists($existingRecord->id, $values)) {
-                $existingRecord->value = $values[$existingRecord->id];
+            if (array_key_exists($existingRecord->{$this->idAttribute}, $values)) {
+                $existingRecord->value = $values[$existingRecord->{$this->idAttribute}];
                 $result = $result && $existingRecord->save(false);
-                unset($values[$existingRecord->id]);
+                unset($values[$existingRecord->{$this->idAttribute}]);
                 unset($existingRecords[$key]);
             }
         }
@@ -73,7 +83,7 @@ class StorageActiveRecord extends Storage
         foreach ($values as $id => $value) {
             /* @var $model \yii\db\ActiveRecordInterface */
             $model = new $activeRecordClass();
-            $attributes = array_merge($filterAttributes, ['id' => $id, 'value' => $value]);
+            $attributes = array_merge($filterAttributes, [$this->idAttribute => $id, $this->valueAttribute => $value]);
             foreach ($attributes as $attributeName => $attributeValue) {
                 $model->$attributeName = $attributeValue;
             }
@@ -96,7 +106,7 @@ class StorageActiveRecord extends Storage
 
         $values = [];
         foreach ($rows as $row) {
-            $values[$row->id] = $row->value;
+            $values[$row->{$this->idAttribute}] = $row->{$this->valueAttribute};
         }
 
         return $values;
@@ -128,7 +138,7 @@ class StorageActiveRecord extends Storage
         /* @var $row \yii\db\ActiveRecordInterface */
         $activeRecordClass = $this->activeRecordClass;
         $row = $activeRecordClass::find()
-            ->andWhere($this->composeFilterCondition(['id' => $id]))
+            ->andWhere($this->composeFilterCondition([$this->idAttribute => $id]))
             ->one();
 
         if ($row) {

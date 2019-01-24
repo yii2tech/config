@@ -5,6 +5,7 @@ Yii 2 Application Runtime Configuration extension Change Log
 -----------------------
 
 - Bug #17: Fixed `StorageActiveRecord` does not trigger ActiveRecord flow events (klimov-paul)
+- Enh #18: Added options for customizing column names to `StorageDb` and `StorageActiveRecord` (inspirenmy, klimov-paul)
 
 
 1.0.6, April 9, 2018
