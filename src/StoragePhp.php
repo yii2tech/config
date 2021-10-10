@@ -24,18 +24,26 @@ class StoragePhp extends Storage
      */
     public $fileName = '@runtime/app_config.php';
 
+    /**
+     * {@inheritdoc}
+     */
+    public function init()
+    {
+        parent::init();
+        $this->fileName = Yii::getAlias($this->fileName);
+    }
 
     /**
      * {@inheritdoc}
      */
     public function save(array $values)
     {
-        $this->clear();
-        $fileName = Yii::getAlias($this->fileName);
-        FileHelper::createDirectory(dirname($fileName));
-        $bytesWritten = file_put_contents($fileName, $this->composeFileContent($values));
-        $this->invalidateScriptCache($fileName);
-        return ($bytesWritten > 0);
+        if (!file_exists($this->fileName)) {
+            FileHelper::createDirectory(dirname($this->fileName));
+        }
+        $bytesWritten = file_put_contents($this->fileName, $this->composeFileContent($values));
+        $this->invalidateScriptCache();
+        return $bytesWritten > 0;
     }
 
     /**
@@ -43,12 +51,10 @@ class StoragePhp extends Storage
      */
     public function get()
     {
-        $fileName = Yii::getAlias($this->fileName);
-        if (file_exists($fileName)) {
-            return require($fileName);
-        } else {
-            return [];
+        if (file_exists($this->fileName)) {
+            return require($this->fileName);
         }
+        return [];
     }
 
     /**
@@ -56,10 +62,9 @@ class StoragePhp extends Storage
      */
     public function clear()
     {
-        $fileName = Yii::getAlias($this->fileName);
-        if (file_exists($fileName)) {
-            $this->invalidateScriptCache($fileName);
-            return unlink($fileName);
+        if (file_exists($this->fileName)) {
+            $this->invalidateScriptCache();
+            return unlink($this->fileName);
         }
         return true;
     }
@@ -71,22 +76,20 @@ class StoragePhp extends Storage
      */
     protected function composeFileContent(array $values)
     {
-        $content = "<?php\n\nreturn " . VarDumper::export($values) . ';';
-        return $content;
+        return "<?php\n\nreturn " . VarDumper::export($values) . ';';
     }
 
     /**
      * Invalidates precompiled script cache (such as OPCache or APC) for the given file.
-     * @param string $fileName file name.
      * @since 1.0.2
      */
-    protected function invalidateScriptCache($fileName)
+    protected function invalidateScriptCache()
     {
         if (function_exists('opcache_invalidate')) {
-            opcache_invalidate($fileName, true);
+            opcache_invalidate($this->fileName, true);
         }
         if (function_exists('apc_delete_file')) {
-            @apc_delete_file($fileName);
+            @apc_delete_file($this->fileName);
         }
     }
 }
